@@ -1,6 +1,8 @@
 #include <FastLED.h>
 #define NUM_LEDS 60
 #define DATA_PIN 6
+#include <SD.h>
+#include <SPI.h>
 #include TM1637Display.h
 String datastring = "Age,Gender,Location,Interest,Skill Level /n";
 const int buttonlogger;
@@ -26,6 +28,7 @@ const int led3 = 19;      // Other michigan led function#2
 const int led4 = 20;      // out of state led function#2
 const int CLK = 21;
 const int DIO = 22;
+const int chipSelect = 23;
 int skillevellights;
 int locationstore = 0;
 int number = 0;
@@ -162,6 +165,7 @@ void mapper() {
     datastring += "\n"
   }
   if (dataFile) {
+    File dataFile = SD.open("datalog.txt", FILE_WRITE);
     dataFile.println(dataString);
     dataFile.close();
     // print to the serial port too:
@@ -179,6 +183,22 @@ void mapper() {
 }
 
 void setup() {
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ;  // wait for serial port to connect. Needed for native USB port only
+  }
+
+  Serial.print("Initializing SD card...");
+
+  // see if the card is present and can be initialized:
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Card failed, or not present");
+    // don't do anything more:
+    while (1)
+      ;
+  }
+  Serial.println("card initialized.");
   display.setBrightness(0x0a);  // set the diplay to maximum brightness
 }
 
