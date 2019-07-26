@@ -186,24 +186,24 @@ void mapper() {
 
 void setup() {
   // Open serial communications and wait for port to open:
-  pinMode(2,INPUT_PULLUP);
-  pinMode(3,INPUT_PULLUP);
-  pinMode(4,INPUT_PULLUP);
-  pinMode(5,INPUT_PULLUP);
-  pinMode(6,INPUT_PULLUP);
-  pinMode(7,INPUT_PULLUP);
-  pinMode(8,INPUT_PULLUP);
-  pinMode(13,INPUT_PULLUP);
-  pinMode(14,INPUT_PULLUP);
-  pinMode(15,INPUT_PULLUP);
-  pinMode(16,INPUT_PULLUP);
-  pinMode(17,INPUT_PULLUP);
+  pinMode(2,INPUT);
+  pinMode(3,INPUT);
+  pinMode(4,INPUT);
+  pinMode(5,INPUT);
+  pinMode(6,INPUT);
+  pinMode(7,INPUT);
+  pinMode(8,INPUT);
+  pinMode(13,INPUT);
+  pinMode(14,INPUT);
+  pinMode(15,INPUT);
+  pinMode(16,INPUT);
+  pinMode(17,INPUT);
   
   pinMode(18,OUTPUT);
   pinMode(19,OUTPUT);
   pinMode(20,OUTPUT);
   pinMode(21,OUTPUT);
-  
+  pinMode(27,OUTPUT);
   Serial.begin(9600);
   while (!Serial) {
     ;  // wait for serial port to connect. Needed for native USB port only
