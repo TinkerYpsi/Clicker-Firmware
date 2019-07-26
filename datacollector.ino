@@ -1,35 +1,33 @@
 #include <FastLED.h>
-#define NUM_LEDS 60
+#define NUM_LEDS 8
 #define DATA_PIN 6
 #include <SD.h>
 #include <SPI.h>
-#include TM1637Display.h
+#include <TM1637Display.h>
 String datastring = "Age,Gender,Location,Interest,Skill Level /n";
-const int buttonlogger;
-const int button1 = 1;    // add 1 to number
-const int button2 = 2;    // add 5 to number
-const int button3 = 3;    // subtract 1 to number
-const int button4 = 4;    // subtract 5 to number
-const int button5 = 5;    // Male gender
-const int button6 = 6;    // Female Gender
-const int button7 = 7;    // Non-Binary Gender
-const int button8 = 8;    // Washtenaw location
-const int button9 = 9;    // Southeast Michigan location
-const int button10 = 10;  // Other Michigan
-const int button11 = 11;  // Out of State
-const int button12 = 12;  // button switcher for location
-const int button13 = 13;  // classes
-const int button14 = 14;  // retail
-const int button15 = 15;  // makerspace
-const int button16 = 16;  // kits
-const int led1 = 17;      // Washtenaw led function#2
-const int led2 = 18;      // Southeast Michigan led function#2
-const int led3 = 19;      // Other michigan led function#2
-const int led4 = 20;      // out of state led function#2
-const int CLK = 21;
-const int DIO = 22;
-const int chipSelect = 23;
-int skillevellights;
+const int buttonlogger =25;
+const int button1 = 2;    // add 1 to number
+const int button2 = 3;    // add 5 to number
+const int button3 = 4;    // subtract 1 to number
+const int button4 = 5;    // subtract 5 to number
+const int button5 = 6;    // Male gender
+const int button6 = 7;    // Female Gender
+const int button7 = 8;    // Non-Binary Gender
+const int button12 = 13;  // button switcher for location
+const int button13 = 14;  // classes
+const int button14 = 15;  // retail
+const int button15 = 16;  // makerspace
+const int button16 = 17;  // prototyping
+const int button17 = 18;   //kits
+const int led1 = 19;      // Washtenaw led function#2
+const int led2 = 20;      // Southeast Michigan led function#2
+const int led3 = 21;      // Other michigan led function#2
+const int led4 = 22;      // out of state led function#2
+
+const int CLK = 23;
+const int DIO = 24;
+const int chipSelect = 25;
+int skilllevellights;
 int locationstore = 0;
 int number = 0;
 String location = "";
@@ -37,11 +35,11 @@ String genders = "";
 String reason = "";
 String skilllevels = "";
 String numberstring = "";
-TM1637Display display(CLK, DIO);
 
+CRGB leds[NUM_LEDS];
+TM1637Display display(CLK, DIO);
 void adder() {
   display.showNumberDec(number);
-  if
     if (digitalRead(button1) == HIGH) {
       number += 1;
     }
@@ -58,38 +56,23 @@ void adder() {
 
 void gender() {
   if (digitalRead(button5) == HIGH) {
-    genders += "Male";
+    genders = "Male";
   }
-  if (digitalRead(button6) == HIGH) {
-    genders += "Female";
+  else if (digitalRead(button6) == HIGH) {
+    genders = "Female";
   }
-  if (digitalRead(button7) == HIGH) {
-    genders += "NonBinary";
-  }
+  else {
+    genders = "NonBinary";
+ }
 }
 
-void locations() {
-  if (digitalRead(button8) == HIGH) {
-    location = "Washtenaw";
-  }
-  if (digitalRead(button9) == HIGH) {
-    location = "Southeast Michigan";
-  }
-  if (digitalRead(button10) == HIGH) {
-    location = "Other Michigan";
-  }
-  if (digitalRead(button11) == HIGH) {
-    location = "Out of State";
-  }
-}
 
-void locationstest() {
+void location() {
   if (digitalRead(button12) == HIGH) {
     locationstore += 1;
   }
 
   // may need to separate into 2 functions
-  while (true) {
     if (locationstore % 4 == 1) {
       digitalWrite(led1, HIGH);
       digitalWrite(led4, LOW);
@@ -102,24 +85,26 @@ void locationstest() {
       digitalWrite(led3, HIGH);
       digitalWrite(led2, LOW);
     }
-    if (locationstore % 4 == 1) {
+    if (locationstore % 4 == 0) {
       digitalWrite(led4, HIGH);
       digitalWrite(led3, LOW);
     }
   }
+
+
+void locationreader(){ 
   if (digitalRead(led1) == HIGH) {
     location = "Washtenaw";
   }
-  if (digitalRead(led2) == HIGH) {
+  else if (digitalRead(led2) == HIGH) {
     location = "Southeast Michigan";
   }
-  if (digitalRead(led3) == HIGH) {
+  else if (digitalRead(led3) == HIGH) {
     location = "Other Michigan";
   }
-  if (digitalRead(led4) == HIGH) {
+  else if (digitalRead(led4) == HIGH) {
     location = "Out of State";
-  }
-}
+  }}
 void reasonchecks() {
   if (digitalRead(button13) == HIGH) {
     reason = "classes";
@@ -148,6 +133,23 @@ void skilllevel() {
   skilllevellights = map(val, 0, 1023, 0, 8);
 }
 
+void reasons(){
+  if (digitalRead(button13)==HIGH){
+    reason= "1";
+    }
+    else if (digitalRead(button14)==HIGH){
+    reason= "2";
+    }
+    else if (digitalRead(button15)==HIGH){
+    reason= "3";
+    }
+    else if (digitalRead(button16)==HIGH){
+    reason= "4";}
+    else if (digitalRead(button17)==HIGH){
+    reason= "5";
+    }
+  }
+  
 void mapper() {
   if (buttonlogger == HIGH) {
     numberstring = String(number);
@@ -159,17 +161,17 @@ void mapper() {
     datastring += ",";
     datastring += reason;
     datastring += ",";
-    skilllevels = String(skillevellights);
+    skilllevels = String(skilllevellights);
     datastring += skilllevels;
     datastring += ",";
-    datastring += "\n"
+    datastring += "\n";
   }
+   File dataFile = SD.open("datalog.txt", FILE_WRITE);
   if (dataFile) {
-    File dataFile = SD.open("datalog.txt", FILE_WRITE);
-    dataFile.println(dataString);
+    dataFile.println(datastring);
     dataFile.close();
     // print to the serial port too:
-    Serial.println(dataString);
+    Serial.println(datastring);
   }
   // if the file isn't open, pop up an error:
   else {
@@ -184,6 +186,24 @@ void mapper() {
 
 void setup() {
   // Open serial communications and wait for port to open:
+  pinMode(2,INPUT_PULLUP);
+  pinMode(3,INPUT_PULLUP);
+  pinMode(4,INPUT_PULLUP);
+  pinMode(5,INPUT_PULLUP);
+  pinMode(6,INPUT_PULLUP);
+  pinMode(7,INPUT_PULLUP);
+  pinMode(8,INPUT_PULLUP);
+  pinMode(13,INPUT_PULLUP);
+  pinMode(14,INPUT_PULLUP);
+  pinMode(15,INPUT_PULLUP);
+  pinMode(16,INPUT_PULLUP);
+  pinMode(17,INPUT_PULLUP);
+  
+  pinMode(18,OUTPUT);
+  pinMode(19,OUTPUT);
+  pinMode(20,OUTPUT);
+  pinMode(21,OUTPUT);
+  
   Serial.begin(9600);
   while (!Serial) {
     ;  // wait for serial port to connect. Needed for native USB port only
@@ -205,8 +225,9 @@ void setup() {
 void loop() {
   adder();
   gender();
-  locations();
+  location();
+  locationreader();
   skilllevel();
+  reasons();
   mapper();
 }
-
